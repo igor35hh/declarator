@@ -1,0 +1,66 @@
+{% extends "declarator/base.html" %}
+
+{% load mptt_tags %}
+
+{% block title %}
+    Offises
+{% endblock %}
+
+{% block content %}
+
+<table>
+
+	<thead>
+		<tr>
+			<th class="name_head"></th>
+			{% for item in set_of_years %}
+				<th class="year">&nbsp;{{item}}</th>	
+			{% endfor %}
+		</tr>
+	</thead>
+	
+	<tbody>
+	
+		{% recursetree offises %}
+		{% with node as offise %}
+		
+		<tr>
+		
+		<th>
+		{% if offise.is_leaf_node %}
+			<a href="{% url 'declarator:offise_by_id' offise.id 0 %}">{{ offise.name }}</a>
+		{% else %}
+			<a href="{% url 'declarator:offise_by_id' offise.id 1 %}">{{ offise.name }}</a>
+		{%endif%}
+		</th>
+			
+		{% for doc in offise.document_related %}
+		
+			{% if doc.1 == 0 %}
+				<td class="year_stat">&nbsp;
+				<span class="nocolor"></span></td>
+			{% else %}
+				{% if doc.2 == 0 and doc.3 == 0 %}
+					<td class="year_stat">&nbsp;
+					<span class="dotwhite"></span></td>
+				{% elif doc.2 == 0 and doc.3 != 0 %}
+					<td class="year_stat">&nbsp;
+					<span class="dotblack"></span></td>
+				{% elif doc.2 != 0 and doc.3 != 0 %}
+					<td class="year_stat">&nbsp;
+					<span class="dotgrey"></span></td>
+				{%endif%}
+			{%endif%}
+			
+		{% endfor %}
+		
+		</tr>
+		
+		{% endwith %}
+		{% endrecursetree %}
+		
+		
+	</tbody>
+</table>
+
+{% endblock %}
