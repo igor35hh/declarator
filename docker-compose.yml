@@ -1,0 +1,49 @@
+version: '3'
+services:
+
+  postgresdb:
+    restart: always
+    image: postgres
+    environment:
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWD=12345678
+      - POSTGRES_DB=declarator
+    networks:
+      - declaratornet
+
+  web:
+    restart: always
+    #build: .
+    image: django_web
+    command: ["python3", "./declarator/manage.py", "runserver", "0.0.0.0:8000"]
+    #command: ["python3", "./declarator/wait_for_db.py", "--", "python3", "./declarator/manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/declarator
+    depends_on:
+      - migration
+      - postgresdb
+    networks:
+      - declaratornet
+
+  migration:
+    restart: on-failure
+    build: .
+    image: django_web
+    command: >
+      bash -c 'python3 ./declarator/manage.py makemigrations && 
+      python3 ./declarator/manage.py migrate && 
+      python3 ./declarator/manage.py loaddata ./declarator/declarators/demodata/declarator.json && 
+      python3 ./declarator/manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser("\"admin"\", "\"admin@example.com"\", "\"adminpass"\")" && 
+      echo ready'
+    
+    volumes:
+      - .:/declarator
+    depends_on:
+      - postgresdb
+    networks:
+      - declaratornet
+
+networks:
+  declaratornet:
