@@ -14,5 +14,6 @@ docker-compose up --build
 
 Wait a few minutes until everything has been build and media files have been downloaded.
 
-Point a browser onto  http://0.0.0.0:8000/declarator to see demo data 
-Point a browser onto http://0.0.0.0:8000/admin where is using login 'admin' and password 'adminpass'
+Point a browser onto  http://0.0.0.0:8000/declarator to see demo data,
+
+point a browser onto http://0.0.0.0:8000/admin where is using login 'admin' and password 'adminpass' to see admin interface
